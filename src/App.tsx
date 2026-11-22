@@ -13,6 +13,7 @@ import { CreateTaskModal } from './components/create-task-modal.tsx'
 function App() {
   const [loading, setLoading] = useState(true)
   const [authenticated, setAuthenticated] = useState(false)
+  const [anonymous, setAnonymous] = useState(false)
   const [modalIsOpen, setModalOpen] = useState(false)
   const DashboardRef = useRef<DashboardHandle>(null);
 
@@ -23,6 +24,7 @@ function App() {
       const isAnonymous = session?.user.is_anonymous === true
 
       setAuthenticated(isAuthenticated)
+      setAnonymous(isAnonymous)
       setLoading(false)
     })
 
@@ -33,6 +35,7 @@ function App() {
       const isAnonymous = session?.user.is_anonymous === true
 
       setAuthenticated(isAuthenticated)
+      setAnonymous(isAnonymous)
       setLoading(false)
     })
 
@@ -61,7 +64,7 @@ function App() {
               </Button>
             )}
             {authenticated && (
-              <LogoutButton className="inline-flex h-9 w-max items-center justify-center rounded-lg px-2.5 py-1.5 text-sm font-medium transition-all outline-none hover:bg-white/10 focus:bg-white/10 focus-visible:ring-3 focus-visible:ring-white/50"/>
+              <LogoutButton isAnonymous={anonymous} className="inline-flex h-9 w-max items-center justify-center rounded-lg px-2.5 py-1.5 text-sm font-medium transition-all outline-none hover:bg-white/10 focus:bg-white/10 focus-visible:ring-3 focus-visible:ring-white/50"/>
             )}
           </div>
         </div>
