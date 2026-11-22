@@ -1,5 +1,5 @@
 import { supabase } from './lib/utils/supabase.ts'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { BrowserRouter as Router, Link, Navigate, Route, Routes } from 'react-router-dom'
 import { LoginForm } from './components/login-form.tsx'
 import { SignUpForm } from './components/sign-up-form.tsx'
@@ -7,13 +7,14 @@ import { ForgotPasswordForm } from './components/forgot-password-form.tsx'
 import { UpdatePasswordForm } from './components/update-password-form.tsx'
 import { Button } from './components/ui/button.tsx'
 import { LogoutButton } from './components/logout-button.tsx'
-import { Dashboard } from './pages/dashboard.tsx'
+import { DashboardHandle, Dashboard } from './pages/dashboard.tsx'
 import { CreateTaskModal } from './components/create-task-modal.tsx'
 
 function App() {
   const [loading, setLoading] = useState(true)
   const [authenticated, setAuthenticated] = useState(false)
   const [modalIsOpen, setModalOpen] = useState(false)
+  const DashboardRef = useRef<DashboardHandle>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -101,11 +102,11 @@ function App() {
           />
           <Route
             path="/dashboard"
-            element={<Dashboard />}
+            element={<Dashboard ref={DashboardRef}/>}
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        <CreateTaskModal isOpen={modalIsOpen} onClose={() => setModalOpen(false)}/>
+        <CreateTaskModal isOpen={modalIsOpen} onClose={() => setModalOpen(false)} updateTasks={() => DashboardRef.current?.updateTasks()}/>
       </main>
     </Router>
   )

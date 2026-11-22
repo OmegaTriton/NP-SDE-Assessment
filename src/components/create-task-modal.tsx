@@ -5,10 +5,11 @@ import { supabase } from "@/lib/utils/supabase.ts"
 
 interface CreateTaskModalProps {
     isOpen: boolean,
-    onClose: () => void
+    onClose: () => void,
+    updateTasks: () => void
 }
 
-export function CreateTaskModal({isOpen, onClose}: CreateTaskModalProps){
+export function CreateTaskModal({isOpen, onClose, updateTasks}: CreateTaskModalProps){
     const dialogRef = useRef<HTMLDialogElement>(null);
     const [title, setTitle] = useState<string>("");
     const [description, setDescription] = useState<string>("");
@@ -24,6 +25,7 @@ export function CreateTaskModal({isOpen, onClose}: CreateTaskModalProps){
         } else if (!isOpen && dialog.open) {
             setTitle("");
             setDescription("");
+            updateTasks();
             dialog.close();
         }
     }, [isOpen]);
@@ -49,6 +51,7 @@ export function CreateTaskModal({isOpen, onClose}: CreateTaskModalProps){
             setError(error instanceof Error ? error.message : 'An error occurred');
         } finally {
         setLoading(false);
+        if(!error) onClose();
         }
     }
 
