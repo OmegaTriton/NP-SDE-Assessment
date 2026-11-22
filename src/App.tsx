@@ -1,11 +1,12 @@
 import { supabase } from './lib/utils/supabase.ts'
 import { useEffect, useState } from 'react'
 import { Link, Navigate, Route, Routes } from 'react-router-dom'
-import { LoginForm } from './components/login-form'
-import { SignUpForm } from './components/sign-up-form'
-import { ForgotPasswordForm } from './components/forgot-password-form'
-import { UpdatePasswordForm } from './components/update-password-form'
-import { Button } from './components/ui/button'
+import { LoginForm } from './components/login-form.tsx'
+import { SignUpForm } from './components/sign-up-form.tsx'
+import { ForgotPasswordForm } from './components/forgot-password-form.tsx'
+import { UpdatePasswordForm } from './components/update-password-form.tsx'
+import { Button } from './components/ui/button.tsx'
+import { LogoutButton } from './components/logout-button.tsx'
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -77,9 +78,7 @@ function App() {
               <section className="text-center">
                 <h1>Welcome</h1>
                 <p>You are signed in.</p>
-                <Button className="mt-4" onClick={handleLogout}>
-                  Sign out
-                </Button>
+                <LogoutButton className="mt-4"/>
               </section>
             ) : (
               <Navigate to="/auth/login" replace />
