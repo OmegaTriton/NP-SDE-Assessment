@@ -7,6 +7,7 @@ import { ForgotPasswordForm } from './components/forgot-password-form.tsx'
 import { UpdatePasswordForm } from './components/update-password-form.tsx'
 import { Button } from './components/ui/button.tsx'
 import { LogoutButton } from './components/logout-button.tsx'
+import { Dashboard } from './pages/dashboard.tsx'
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -68,7 +69,7 @@ function App() {
           </div>
         </div>
       </header>
-      <main className="flex min-h-screen items-center justify-center p-6">
+      <main className="flex w-full items-center justify-center p-6">
         <Routes>
           <Route
             path="/"
@@ -104,27 +105,7 @@ function App() {
           />
           <Route
             path="/dashboard"
-            element={
-              authenticated ? (
-                loggedIn ? (
-                  <section className="text-center">
-                    <h1>Welcome</h1>
-                    <p>You are signed in.</p>
-                    <LogoutButton className="mt-4" />
-                  </section>
-                ) : anon ? (
-                  <section className="text-center">
-                    <h1>Welcome</h1>
-                    <p>You are signed in anonymously.</p>
-                    <LogoutButton className="mt-4" />
-                  </section>
-                ) : (
-                  <Navigate to="/auth/login" replace />
-                )
-              ) : (
-                <Navigate to="/auth/login" replace />
-              )
-            }
+            element={<Dashboard />}
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
