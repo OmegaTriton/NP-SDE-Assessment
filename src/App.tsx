@@ -11,17 +11,30 @@ import { LogoutButton } from './components/logout-button.tsx'
 function App() {
   const [loading, setLoading] = useState(true)
   const [authenticated, setAuthenticated] = useState(false)
+  const [loggedIn, setLoggedIn] = useState(false)
+  const [anon, setAnon] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      setAuthenticated(Boolean(data.session))
+      const session = data.session
+      const isAuthenticated = Boolean(session)
+      const isAnonymous = session?.user.is_anonymous === true
+
+      setAuthenticated(isAuthenticated)
+      setLoggedIn(isAuthenticated && !isAnonymous)
+      setAnon(isAuthenticated && isAnonymous)
       setLoading(false)
     })
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setAuthenticated(Boolean(session))
+      const isAuthenticated = Boolean(session)
+      const isAnonymous = session?.user.is_anonymous === true
+
+      setAuthenticated(isAuthenticated)
+      setLoggedIn(isAuthenticated && !isAnonymous)
+      setAnon(isAuthenticated && isAnonymous)
       setLoading(false)
     })
 
@@ -30,10 +43,6 @@ function App() {
 
   if (loading) {
     return <main className="flex min-h-screen items-center justify-center">Loading...</main>
-  }
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
   }
 
   return (
@@ -75,11 +84,21 @@ function App() {
           path="/protected"
           element={
             authenticated ? (
-              <section className="text-center">
-                <h1>Welcome</h1>
-                <p>You are signed in.</p>
-                <LogoutButton className="mt-4"/>
-              </section>
+              loggedIn ? (
+                <section className="text-center">
+                  <h1>Welcome</h1>
+                  <p>You are signed in.</p>
+                  <LogoutButton className="mt-4" />
+                </section>
+              ) : anon ? (
+                <section className="text-center">
+                  <h1>Welcome</h1>
+                  <p>You are signed in anonymously.</p>
+                  <LogoutButton className="mt-4" />
+                </section>
+              ) : (
+                <Navigate to="/auth/login" replace />
+              )
             ) : (
               <Navigate to="/auth/login" replace />
             )

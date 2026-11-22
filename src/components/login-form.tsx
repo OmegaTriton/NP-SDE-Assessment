@@ -19,7 +19,27 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [isGuest, setGuest] = useState(false)
   const navigate = useNavigate()
+
+  async function attemptAnonymousSignIn() {
+    setIsLoading(true)
+    setError(null)
+    setGuest(true)
+
+    try {
+      const { error } = await supabase.auth.signInAnonymously()
+      if (error) throw error
+
+      // Update this route to redirect to an authenticated route. The user already has an active session.
+      const next = new URLSearchParams(window.location.search).get('next')
+      navigate(safeNextPath(next, '/protected'))
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'An error occurred')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const handleLogin = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -82,9 +102,14 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
                 />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Signing in...' : 'Sign in'}
-              </Button>
+              <div className="flex flex-col gap-2">
+                <Button type="submit" variant="outline" className="w-full" disabled={isLoading}>
+                  {isLoading ? 'Signing in...' : 'Sign in'}
+                </Button>
+                <Button variant="outline" className="w-full" disabled={isLoading} onClick={() => attemptAnonymousSignIn()}>
+                  Continue as Guest
+                </Button>
+              </div>
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{' '}
