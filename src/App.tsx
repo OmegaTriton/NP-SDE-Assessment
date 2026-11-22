@@ -8,12 +8,12 @@ import { UpdatePasswordForm } from './components/update-password-form.tsx'
 import { Button } from './components/ui/button.tsx'
 import { LogoutButton } from './components/logout-button.tsx'
 import { Dashboard } from './pages/dashboard.tsx'
+import { CreateTaskModal } from './components/create-task-modal.tsx'
 
 function App() {
   const [loading, setLoading] = useState(true)
   const [authenticated, setAuthenticated] = useState(false)
-  const [loggedIn, setLoggedIn] = useState(false)
-  const [anon, setAnon] = useState(false)
+  const [modalIsOpen, setModalOpen] = useState(false)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -22,8 +22,6 @@ function App() {
       const isAnonymous = session?.user.is_anonymous === true
 
       setAuthenticated(isAuthenticated)
-      setLoggedIn(isAuthenticated && !isAnonymous)
-      setAnon(isAuthenticated && isAnonymous)
       setLoading(false)
     })
 
@@ -34,8 +32,6 @@ function App() {
       const isAnonymous = session?.user.is_anonymous === true
 
       setAuthenticated(isAuthenticated)
-      setLoggedIn(isAuthenticated && !isAnonymous)
-      setAnon(isAuthenticated && isAnonymous)
       setLoading(false)
     })
 
@@ -56,12 +52,12 @@ function App() {
 
           <div className="flex items-center gap-3">
             {authenticated && (
-              <Link
-                to="/dashboard"
+              <Button
                 className="inline-flex h-9 w-max items-center justify-center rounded-lg px-2.5 py-1.5 text-sm font-medium transition-all outline-none hover:bg-white/10 focus:bg-white/10 focus-visible:ring-3 focus-visible:ring-white/50"
+                onClick={() => setModalOpen(true)}
               >
-                Dashboard
-              </Link>
+                Create Project
+              </Button>
             )}
             {authenticated && (
               <LogoutButton className="inline-flex h-9 w-max items-center justify-center rounded-lg px-2.5 py-1.5 text-sm font-medium transition-all outline-none hover:bg-white/10 focus:bg-white/10 focus-visible:ring-3 focus-visible:ring-white/50"/>
@@ -109,6 +105,7 @@ function App() {
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <CreateTaskModal isOpen={modalIsOpen} onClose={() => setModalOpen(false)}/>
       </main>
     </Router>
   )
